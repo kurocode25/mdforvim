@@ -51,7 +51,7 @@ Bundle 'kurocode25/mdforvim'
 If you use NeoBundle,please add follow phrase your ~/.vimrc(or \_vimrc) and install by NeoBundle.
 
 ```
-NeoBundleFetch 'Shougo/neobundle.vim'
+NeoBundleFetch 'kurocode25/mdforvim'
 ```
 
 ## Licence
