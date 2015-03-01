@@ -356,11 +356,11 @@ function! s:Parse_code(i)
         let s:line_list[a:i] = '<pre><code>'
         let l:k = 1
         while s:line_list[a:i + l:k] != '```'
-            let l:k += 1
             if s:i + l:k == len(s:line_list) - 1
                 let l:k = 0
                 break
             endif
+            let l:k += 1
         endwhile
         if s:line_list[s:i + l:k] == '```'
             let s:line_list[s:i + l:k] = '</code></pre>'
