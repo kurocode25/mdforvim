@@ -582,7 +582,7 @@ fun! s:Parse_autolink(i) " {{{
                     let l:l += 1
                 endwhile
                 let l:url = join(l:mail_list,'')
-                let l:url_list[l:k] = '<a href="'.l:url.'">'.l:url.'</a>'
+                let l:url_list[l:k] = '<a href="mailto:'.l:url.'">'.l:url.'</a>'
             endif
             let l:k += 1
         endwhile
