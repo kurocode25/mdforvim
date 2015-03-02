@@ -7,10 +7,10 @@ mdforvim
 
 1. converting instantly Markdown lang. to HTML in current buffer
 2. saving as HTML file without change original Markdown file
-3. showing realtime preview by WEB browser during edit Markdown file
+3. showing real-time preview by WEB browser during edit Markdown file
 
 ## Demo
-### Showing Realtime Preview
+### Showing Real-time Preview
 ![demo01](./mdpreview/images/demo01.gif)
 
 ### Conversion Markdown in current buffer
@@ -31,7 +31,7 @@ Please input follow command to save as HTML file.
 :MdSaveAs <file name.html>
 ```
 
-### Showing Realtime Preview
+### Showing Real-time Preview
 Please input follow command to start preview.
 
 ```
