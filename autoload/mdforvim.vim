@@ -1,6 +1,5 @@
 " Last Change: 2015 Feb 27
 " Maintainer: Kuro_CODE25 <kuro.code25@gmail.com>
-" License: This file is placed in the public domain. 
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -42,7 +41,7 @@ function! mdforvim#preview() " {{{
     call s:define_path()
     let s:toggle_autowrite = 1
     let l:file_path = s:base_path.s:path_to_mdpreview.s:file_name
-    call s:Parsemd()
+    call s:Parsemd_preview()
     call insert(s:line_list,'</SCRIPT>')
     call insert(s:line_list,'//-->')
     call insert(s:line_list,'setTimeout("location.reload()",1000)')
@@ -171,6 +170,36 @@ fun! s:Parsemd()
     call s:Parse_paragraph()
     call s:Parse_char()
 endfun
+" Parse Markdown for preview.
+fun! s:Parsemd_preview() " {{{
+    let s:line_list =['']
+    let s:i = 0
+    let s:num_of_line = line("$")
+    " echo s:num_of_line
+    for s:i in range(1,s:num_of_line)
+        call add(s:line_list,getline(s:i))
+    endfor
+    call add(s:line_list,'')
+    " echo len(s:line_list)
+    let s:i = 0
+    while s:i < len(s:line_list)
+        call s:Parse_autolink(s:i)
+        call s:Parse_header(s:i)
+        call s:Parse_horizon(s:i)
+        call s:Parse_enphasis(s:i)
+        call s:Parse_code(s:i)
+        call s:Parse_image_preview(s:i)
+        call s:Parse_URL(s:i)
+        call s:Parse_list(s:i)
+        call s:Parse_blockquote(s:i)
+        call s:Parse_CR(s:i)
+"       " echo 's:i'.s:i
+        let s:i += 1
+    endwhile
+    call s:Parse_paragraph()
+    call s:Parse_char()
+endfun " }}}
+
 function! s:Parse_header(i)
     if match(s:line_list[a:i],"###### ") == 0 && match(s:line_list[a:i],"!###### ") < 0
         let s:line_list[a:i] = substitute(s:line_list[a:i],"###### ","<h6>","g") ."</h6>"
@@ -480,6 +509,45 @@ fun! s:Parse_image(i) " {{{
     endif
 endfunction " }}}
 
+" Parse image for preview.
+fun! s:Parse_image_preview(i) " {{{
+    let l:current_path = expand('<sfile>:p:h')
+    if stridx(s:line_list[a:i],'![') >= 0 && stridx(s:line_list[a:i],'](')
+        let l:line = s:line_list[a:i]
+        let l:lengh = strlen(l:line)
+        let l:url_list = []
+        while stridx(l:line,'](') > 0
+            let l:forward = strpart(l:line,0,stridx(l:line,'](') + 1)
+            let l:back = strpart(l:line,stridx(l:line,'](') + 1,l:lengh)
+            call add(l:url_list,strpart(l:forward,0,stridx(l:forward,'![')))
+            call add(l:url_list,strpart(l:forward,stridx(l:forward,'!['),strlen(l:forward)).strpart(l:back,0,stridx(l:back,')') + 1))
+            let l:line = strpart(l:back,stridx(l:back,')') + 1,strlen(l:back))
+        endwhile
+        " echo l:url_list
+        let l:k = 0
+        while l:k < len(l:url_list)
+            if stridx(l:url_list[l:k],'![') == 0 && strridx(l:url_list[l:k - 1],'\') < 0
+                let l:url_list[l:k] = substitute(l:url_list[l:k],' ','','g')
+                let l:word = s:Cutstrpart(l:url_list[l:k],'[',']')
+                if stridx(l:url_list[l:k],'"') > 0
+                    let l:url = s:Cutstrpart(l:url_list[l:k],'(','"')
+                else
+                    let l:url = s:Cutstrpart(l:url_list[l:k],'(',')')
+                endif
+                let l:title = s:Cutstrpart(l:url_list[l:k],'"','"')
+                " echo "url_word:".l:word
+                " echo "url_url:".l:url
+                " echo "url_title:".l:title
+
+                let l:url_list[l:k] = '<img src="'.l:current_path.'/'.l:url.'" alt="'.l:word.'" title="'.l:title.'">'
+            endif
+
+            let l:k += 1
+        endwhile
+        let s:line_list[a:i] = join(l:url_list,'')
+
+    endif
+endfunction " }}}
 "...>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....
 " Parse carriage return.
 fun! s:Parse_CR(i) " {{{
@@ -582,7 +650,7 @@ fun! s:Parse_autolink(i) " {{{
                     let l:l += 1
                 endwhile
                 let l:url = join(l:mail_list,'')
-                let l:url_list[l:k] = '<a href="mailto:'.l:url.'">'.l:url.'</a>'
+                let l:url_list[l:k] = '<a href="'.l:url.'">'.l:url.'</a>'
             endif
             let l:k += 1
         endwhile
