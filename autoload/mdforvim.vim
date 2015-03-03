@@ -1,4 +1,4 @@
-" Last Change: 2015 Feb 27
+" Last Change: 2015 Mar 3
 " Maintainer: Kuro_CODE25 <kuro.code25@gmail.com>
 
 let s:save_cpo = &cpo
@@ -429,7 +429,7 @@ endfunction
 "...>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....
 " Parse URL.
 function! s:Parse_URL(i) "{{{
-    if stridx(s:line_list[a:i],'[') >= 0 && stridx(s:line_list[a:i],'](') &&stridx(s:line_list[a:i],'![') < 0
+    if stridx(s:line_list[a:i],'[') >= 0 && stridx(s:line_list[a:i],'](') > 0 &&stridx(s:line_list[a:i],'![') < 0
         let l:line = s:line_list[a:i]
         let l:lengh = strlen(l:line)
         let l:url_list = []
@@ -679,12 +679,12 @@ endfunction " }}}
 fun! s:Parse_paragraph() " {{{
     let s:j = 0
     while s:j < len(s:line_list)
-        call s:skip_block('<table>','</table>')
-        call s:skip_block('<pre>','</pre>')
-        call s:skip_block('<p>','</p>')
-        call s:skip_block('<ul>','</ul>')
-        call s:skip_block('<ol>','</ol>')
-        call s:skip_block('<div>','</div>')
+        call s:skip_block('<table','</table>')
+        call s:skip_block('<pre','</pre>')
+        call s:skip_block('<p','</p>')
+        call s:skip_block('<ul','</ul>')
+        call s:skip_block('<ol','</ol>')
+        call s:skip_block('<div','</div>')
         if s:line_list[s:j] != '' && stridx(s:line_list[s:j],'<h') < 0  && stridx(s:line_list[s:j],'<blockquote>') < 0 && stridx(s:line_list[s:j],'</blockquote>') < 0 && stridx(s:line_list[s:j],'<ul>') < 0
             let s:line_list[s:j] = '<p>'.s:line_list[s:j]
             let a:k = 0
