@@ -1,4 +1,4 @@
-" Last Change: 2015 Mar 3
+" Last Change: 2015 Mar 4
 " Maintainer: Kuro_CODE25 <kuro.code25@gmail.com>
 
 let s:save_cpo = &cpo
@@ -21,7 +21,7 @@ let s:toggle_autowrite = 0
 
 " Convert current buffer.
 function! mdforvim#convert() " {{{
-    call s:Parsemd()
+    call s:Convert_makdown()
     " echo s:line_list
     let s:i = 0
     while s:i < len(s:line_list)
@@ -32,7 +32,7 @@ endfunction " }}}
 
 " Save as html file
 function! mdforvim#save_html(filename) " {{{
-    call s:Parsemd()
+    call s:Convert_makdown()
     call writefile(s:line_list,a:filename)
 endfunction " }}}
 
@@ -41,7 +41,7 @@ function! mdforvim#preview() " {{{
     call s:define_path()
     let s:toggle_autowrite = 1
     let l:file_path = s:base_path.s:path_to_mdpreview.s:file_name
-    call s:Parsemd_preview()
+    call s:Convert_makdown_preview()
     call insert(s:line_list,'</SCRIPT>')
     call insert(s:line_list,'//-->')
     call insert(s:line_list,'setTimeout("location.reload()",1000)')
@@ -72,7 +72,7 @@ function! mdforvim#autowrite() " {{{
     call s:define_path()
     let l:file_path = s:base_path.s:path_to_mdpreview.s:file_name
     if s:toggle_autowrite == 1
-        call s:Parsemd()
+        call s:Convert_makdown()
         call insert(s:line_list,'</SCRIPT>')
         call insert(s:line_list,'//-->')
         call insert(s:line_list,'setTimeout("location.reload()",1000)')
@@ -142,7 +142,7 @@ function! s:define_path()
     endif
 endfunction
 
-fun! s:Parsemd()
+fun! s:Convert_makdown()
     let s:line_list =['']
     let s:i = 0
     let s:num_of_line = line("$")
@@ -154,24 +154,24 @@ fun! s:Parsemd()
     " echo len(s:line_list)
     let s:i = 0
     while s:i < len(s:line_list)
-        call s:Parse_autolink(s:i)
-        call s:Parse_header(s:i)
-        call s:Parse_horizon(s:i)
-        call s:Parse_enphasis(s:i)
-        call s:Parse_code(s:i)
-        call s:Parse_image(s:i)
-        call s:Parse_URL(s:i)
-        call s:Parse_list(s:i)
-        call s:Parse_blockquote(s:i)
-        call s:Parse_CR(s:i)
+        call s:Convert_autolink(s:i)
+        call s:Convert_header(s:i)
+        call s:Convert_horizon(s:i)
+        call s:Convert_enphasis(s:i)
+        call s:Convert_code(s:i)
+        call s:Convert_image(s:i)
+        call s:Convert_URL(s:i)
+        call s:Convert_list(s:i)
+        call s:Convert_blockquote(s:i)
+        call s:Convert_CR(s:i)
 "       " echo 's:i'.s:i
         let s:i += 1
     endwhile
-    call s:Parse_paragraph()
-    call s:Parse_char()
+    call s:Convert_paragraph()
+    call s:Convert_char()
 endfun
-" Parse Markdown for preview.
-fun! s:Parsemd_preview() " {{{
+" Convert Markdown for preview.
+fun! s:Convert_makdown_preview() " {{{
     let s:line_list =['']
     let s:i = 0
     let s:num_of_line = line("$")
@@ -183,24 +183,24 @@ fun! s:Parsemd_preview() " {{{
     " echo len(s:line_list)
     let s:i = 0
     while s:i < len(s:line_list)
-        call s:Parse_autolink(s:i)
-        call s:Parse_header(s:i)
-        call s:Parse_horizon(s:i)
-        call s:Parse_enphasis(s:i)
-        call s:Parse_code(s:i)
-        call s:Parse_image_preview(s:i)
-        call s:Parse_URL(s:i)
-        call s:Parse_list(s:i)
-        call s:Parse_blockquote(s:i)
-        call s:Parse_CR(s:i)
+        call s:Convert_autolink(s:i)
+        call s:Convert_header(s:i)
+        call s:Convert_horizon(s:i)
+        call s:Convert_enphasis(s:i)
+        call s:Convert_code(s:i)
+        call s:Convert_image_preview(s:i)
+        call s:Convert_URL(s:i)
+        call s:Convert_list(s:i)
+        call s:Convert_blockquote(s:i)
+        call s:Convert_CR(s:i)
 "       " echo 's:i'.s:i
         let s:i += 1
     endwhile
-    call s:Parse_paragraph()
-    call s:Parse_char()
+    call s:Convert_paragraph()
+    call s:Convert_char()
 endfun " }}}
 
-function! s:Parse_header(i)
+function! s:Convert_header(i)
     if match(s:line_list[a:i],"###### ") == 0 && match(s:line_list[a:i],"!###### ") < 0
         let s:line_list[a:i] = substitute(s:line_list[a:i],"###### ","<h6>","g") ."</h6>"
     elseif match(s:line_list[a:i],"##### ") == 0
@@ -222,17 +222,17 @@ function! s:Parse_header(i)
     endif
 endfunction
 "...>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....
-" Parse horizon line.
-fun! s:Parse_horizon(i)
+" Convert horizon line.
+fun! s:Convert_horizon(i)
     let l:line = substitute(s:line_list[a:i],' ','','g')
     if (strpart(l:line,0,3) == "***" || strpart(l:line,0,3) == "---")  && stridx(s:line_list[a:i],'\') < 0
         let s:line_list[a:i] = "<hr>"
     endif
 endfun
 "...>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....
-" Parse enphasis.
-function! s:Parse_enphasis(i) " {{{
-" Parse <strong>: {
+" Convert enphasis.
+function! s:Convert_enphasis(i) " {{{
+" Convert <strong>: {
     if match(s:line_list[a:i],'\*\*') >= 0
         let l:linelist = split(s:line_list[a:i],'\*\*\zs')
         " **の数を数える
@@ -288,8 +288,8 @@ function! s:Parse_enphasis(i) " {{{
         endwhile
         let s:line_list[a:i] = join(l:linelist,'')
     endif
-" Parse <strong>: }
-" Parse <em>: {
+" Convert <strong>: }
+" Convert <em>: {
     if match(s:line_list[a:i],'\*') >= 0
         let l:linelist = split(s:line_list[a:i],'\*\zs')
         let a:k = 0
@@ -345,8 +345,8 @@ function! s:Parse_enphasis(i) " {{{
         endwhile
         let s:line_list[a:i] = join(l:linelist,'')
     endif
-" Parse <em>: }
-" Parse <del>: {
+" Convert <em>: }
+" Convert <del>: {
     if match(s:line_list[a:i],'\~\~') >= 0
         let l:linelist = split(s:line_list[a:i],'\~\~\zs')
         " **の数を数える
@@ -375,12 +375,12 @@ function! s:Parse_enphasis(i) " {{{
         endwhile
         let s:line_list[a:i] = join(l:linelist,'')
     endif
-" Parse <del>: }
+" Convert <del>: }
 endfunction " }}}
 
 "...>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....
-" Parse code.
-function! s:Parse_code(i)
+" Convert code.
+function! s:Convert_code(i)
     if stridx(s:line_list[a:i],'```') >= 0
         let s:line_list[a:i] = '<pre><code>'
         let l:k = 1
@@ -427,8 +427,8 @@ function! s:Parse_code(i)
 endfunction
 
 "...>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....
-" Parse URL.
-function! s:Parse_URL(i) "{{{
+" Convert URL.
+function! s:Convert_URL(i) "{{{
     if stridx(s:line_list[a:i],'[') >= 0 && stridx(s:line_list[a:i],'](') > 0 &&stridx(s:line_list[a:i],'![') < 0
         let l:line = s:line_list[a:i]
         let l:lengh = strlen(l:line)
@@ -470,8 +470,8 @@ function! s:Parse_URL(i) "{{{
 endfunction " }}}
 
 "...>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....
-" Parse image.
-fun! s:Parse_image(i) " {{{
+" Convert image.
+fun! s:Convert_image(i) " {{{
     if stridx(s:line_list[a:i],'![') >= 0 && stridx(s:line_list[a:i],'](')
         let l:line = s:line_list[a:i]
         let l:lengh = strlen(l:line)
@@ -509,8 +509,8 @@ fun! s:Parse_image(i) " {{{
     endif
 endfunction " }}}
 
-" Parse image for preview.
-fun! s:Parse_image_preview(i) " {{{
+" Convert image for preview.
+fun! s:Convert_image_preview(i) " {{{
     let l:current_path = expand('<sfile>:p:h')
     if stridx(s:line_list[a:i],'![') >= 0 && stridx(s:line_list[a:i],'](')
         let l:line = s:line_list[a:i]
@@ -549,15 +549,15 @@ fun! s:Parse_image_preview(i) " {{{
     endif
 endfunction " }}}
 "...>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....
-" Parse carriage return.
-fun! s:Parse_CR(i) " {{{
+" Convert carriage return.
+fun! s:Convert_CR(i) " {{{
     if strridx(s:line_list[a:i],'  ') == strlen(s:line_list[a:i]) - 2
         let s:line_list[a:i] = strpart(s:line_list[a:i],0,strridx(s:line_list[a:i],'  '))."<br />"
     endif
 endfunction " }}}
 
-" Parse list.
-fun! s:Parse_list(i) " {{{
+" Convert list.
+fun! s:Convert_list(i) " {{{
 " Disc List: {
    if stridx(strpart(s:line_list[a:i],0,3),'* ') >= 0 && stridx(strpart(s:line_list[a:i],0,3),'\*') < 0
        let s:line_list[a:i] = substitute(s:line_list[a:i],"* ","<li>","g")."</li>"
@@ -599,8 +599,8 @@ fun! s:Parse_list(i) " {{{
 endfunction " }}}
 
 "...>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....
-" Parse automatic link.
-fun! s:Parse_autolink(i) " {{{
+" Convert automatic link.
+fun! s:Convert_autolink(i) " {{{
 " automatic link URL: {
     if stridx(s:line_list[a:i],'<http://') >= 0
         let l:url_list = []
@@ -660,8 +660,8 @@ fun! s:Parse_autolink(i) " {{{
 endfunction " }}}
 
 "...>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....
-" Parse blockquote.
-function! s:Parse_blockquote(i) " {{{
+" Convert blockquote.
+function! s:Convert_blockquote(i) " {{{
     if strpart(s:line_list[a:i],0,2) == "> " || strpart(s:line_list[a:i],0,1) == ">"
         let s:line_list[a:i] = substitute(s:line_list[a:i],">","","g")
         if s:line_list[a:i - 1] == ""
@@ -675,8 +675,8 @@ function! s:Parse_blockquote(i) " {{{
 endfunction " }}}
 
 "...>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....
-" Parse paragraph
-fun! s:Parse_paragraph() " {{{
+" Convert paragraph
+fun! s:Convert_paragraph() " {{{
     let s:j = 0
     while s:j < len(s:line_list)
         call s:skip_block('<table','</table>')
@@ -707,7 +707,7 @@ fun! s:Parse_paragraph() " {{{
 endfunction " }}}
 
 " Convert special charcter
-function! s:Parse_char() " {{{
+function! s:Convert_char() " {{{
     let l:k = 0
     while l:k < len(s:line_list)
         let s:line_list[l:k] = substitute(s:line_list[l:k],'\\#','#',"g")
@@ -763,6 +763,7 @@ fun! s:Cutstrpart(str,start,end) " {{{
     endif
     return strpart(a:str,l:num_start,l:num_end)
 endfunction " }}}
+
 
 
 let &cpo = s:save_cpo
