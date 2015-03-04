@@ -21,7 +21,7 @@ let s:toggle_autowrite = 0
 
 " Convert current buffer.
 function! mdforvim#convert() " {{{
-    call s:Convert_makdown()
+    call s:Convert_markdown()
     " echo s:line_list
     let s:i = 0
     while s:i < len(s:line_list)
@@ -32,7 +32,7 @@ endfunction " }}}
 
 " Save as html file
 function! mdforvim#save_html(filename) " {{{
-    call s:Convert_makdown()
+    call s:Convert_markdown()
     call writefile(s:line_list,a:filename)
 endfunction " }}}
 
@@ -41,7 +41,7 @@ function! mdforvim#preview() " {{{
     call s:define_path()
     let s:toggle_autowrite = 1
     let l:file_path = s:base_path.s:path_to_mdpreview.s:file_name
-    call s:Convert_makdown_preview()
+    call s:Convert_markdown_preview()
     call insert(s:line_list,'</SCRIPT>')
     call insert(s:line_list,'//-->')
     call insert(s:line_list,'setTimeout("location.reload()",1000)')
@@ -72,7 +72,7 @@ function! mdforvim#autowrite() " {{{
     call s:define_path()
     let l:file_path = s:base_path.s:path_to_mdpreview.s:file_name
     if s:toggle_autowrite == 1
-        call s:Convert_makdown()
+        call s:Convert_markdown()
         call insert(s:line_list,'</SCRIPT>')
         call insert(s:line_list,'//-->')
         call insert(s:line_list,'setTimeout("location.reload()",1000)')
@@ -142,7 +142,7 @@ function! s:define_path()
     endif
 endfunction
 
-fun! s:Convert_makdown()
+fun! s:Convert_markdown()
     let s:line_list =['']
     let s:i = 0
     let s:num_of_line = line("$")
@@ -171,7 +171,7 @@ fun! s:Convert_makdown()
     call s:Convert_char()
 endfun
 " Convert Markdown for preview.
-fun! s:Convert_makdown_preview() " {{{
+fun! s:Convert_markdown_preview() " {{{
     let s:line_list =['']
     let s:i = 0
     let s:num_of_line = line("$")
