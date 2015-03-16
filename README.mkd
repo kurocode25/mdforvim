@@ -41,7 +41,7 @@ Please input follow command to start preview.
 If you finish preview, we recommend run follow command before close WEB brwoser.
 
 ```
-:StopMdPreview
+:MsStopPreview
 ```
 
 ## Install
