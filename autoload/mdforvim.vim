@@ -1,4 +1,4 @@
-" Last Change: 2015 Mar 4
+" Last Change: 2015 Apr. 2
 " Maintainer: Kuro_CODE25 <kuro.code25@gmail.com>
 
 let s:save_cpo = &cpo
@@ -56,14 +56,15 @@ function! mdforvim#preview() " {{{
     call add(s:line_list,'</body>')
     call add(s:line_list,'</html>')
 " encode utf-8 for output.html {
+    let l:copy_list = copy(s:line_list)
     let l:k = 0
-    while l:k < len(s:line_list)
-        let s:line_list[l:k] = iconv(s:line_list[l:k],&encoding,"uft-8")
+    while l:k < len(l:copy_list)
+        let l:copy_list[l:k] = iconv(l:copy_list[l:k],&encoding,"uft-8")
         let l:k += 1
     endwhile
 " encode utf-8 for output.html }
 
-    call writefile(s:line_list,l:file_path)
+    call writefile(l:copy_list,l:file_path)
     call s:open(l:file_path)
 endfunction " }}}
 
@@ -86,8 +87,16 @@ function! mdforvim#autowrite() " {{{
         call insert(s:line_list,'<html>')
         call add(s:line_list,'</body>')
         call add(s:line_list,'</html>')
-        " echo s:base_patj
-        call writefile(s:line_list,l:file_path)
+" encode utf-8 for output.html {
+        let l:copy_list = copy(s:line_list)
+        let l:k = 0
+        while l:k < len(l:copy_list)
+            let l:copy_list[l:k] = iconv(l:copy_list[l:k],&encoding,"uft-8")
+            let l:k += 1
+        endwhile
+" encode utf-8 for output.html }
+        " echo s:base_path
+        call writefile(l:copy_list,l:file_path)
     endif
 endfunction " }}}
 
