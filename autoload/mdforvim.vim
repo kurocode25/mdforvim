@@ -6,7 +6,7 @@
 " |_| |_| |_|\__,_|_|  \___/|_|    \_/ |_|_| |_| |_|
 " 
 " ==================================================
-" Last Change: 2015 Dic. 10
+" Last Change: 2015 Oct. 10
 " Maintainer: Kuro_CODE25 <kuro.code25@gmail.com>
 
 let s:save_cpo = &cpo
