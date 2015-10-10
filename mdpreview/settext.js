@@ -1,3 +1,3 @@
-var text = '<h5>Title</h5><hr><b>Please close this page.</b>';
+var text = '<h3>Please close this page.</h3>';
 var bodyTag = document.getElementById("body");
 bodyTag.innerHTML = text;

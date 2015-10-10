@@ -48,6 +48,8 @@ endfunction " }}}
 function! mdforvim#preview() " {{{
     call s:Convert_markdown_preview()
     let l:text = join(s:line_list,'')
+    let l:text = substitute(l:text,"'",'"','g')
+    let l:text = substitute(l:text,'"','\\"','g')
     call s:define_path()
     let l:settext_path = s:base_path.s:path_to_mdpreview.'settext.js'
     let l:prevfile_path = s:base_path.s:path_to_mdpreview.'preview.html'
@@ -71,6 +73,8 @@ function! mdforvim#autowrite() "{{{
     if s:toggle_autowrite == 1
         call s:Convert_markdown_preview()
         let l:text = join(s:line_list,'')
+        let l:text = substitute(l:text,"'",'"','g')
+        let l:text = substitute(l:text,'"','\\"','g')
         call s:define_path()
         let l:settext_path = s:base_path.s:path_to_mdpreview.'settext.js'
         let l:text_list = []
@@ -646,7 +650,7 @@ fun! s:Convert_autolink(i) " {{{
             let l:line = strpart(l:back,stridx(l:back,'>') + 1,len(l:back))
         endwhile
         call add(l:url_list,l:line)
-        echo l:url_list
+        " echo l:url_list
         let l:k = 0
         while l:k < len(l:url_list)
             if stridx(l:url_list[l:k],'<') == 0 && stridx(l:url_list[l:k],'@') > 0 && strridx(l:url_list[l:k - 1],'\') < 0
