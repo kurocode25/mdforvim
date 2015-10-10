@@ -1,4 +1,12 @@
-" Last Change: 2015 Apr. 2
+" ==================================================
+"                _  __                  _           
+"  _ __ ___   __| |/ _| ___  _ ____   _(_)_ __ ___  
+" | '_ ` _ \ / _` | |_ / _ \| '__\ \ / / | '_ ` _ \ 
+" | | | | | | (_| |  _| (_) | |   \ V /| | | | | | |
+" |_| |_| |_|\__,_|_|  \___/|_|    \_/ |_|_| |_| |_|
+" 
+" ==================================================
+" Last Change: 2015 Dic. 10
 " Maintainer: Kuro_CODE25 <kuro.code25@gmail.com>
 
 let s:save_cpo = &cpo
@@ -38,74 +46,64 @@ endfunction " }}}
 
 " Start preview.
 function! mdforvim#preview() " {{{
-    call s:define_path()
-    let s:toggle_autowrite = 1
-    let l:file_path = s:base_path.s:path_to_mdpreview.s:file_name
     call s:Convert_markdown_preview()
-    call insert(s:line_list,'</SCRIPT>')
-    call insert(s:line_list,'//-->')
-    call insert(s:line_list,'setTimeout("location.reload()",1000)')
-    call insert(s:line_list,'<!--')
-    call insert(s:line_list,'<SCRIPT LANGUAGE="JavaScript">')
-    call insert(s:line_list,'<body>')
-    call insert(s:line_list,'</head>')
-    call insert(s:line_list,'<link rel="stylesheet" href="style.css" type="text/css">')
-    call insert(s:line_list,'<meta http-equiv="Content-Type" content="text/html; charset=utf-8">')
-    call insert(s:line_list,'<head>')
-    call insert(s:line_list,'<html>')
-    call add(s:line_list,'</body>')
-    call add(s:line_list,'</html>')
-" encode utf-8 for output.html {
-    let l:copy_list = copy(s:line_list)
+    let l:text = join(s:line_list,'')
+    call s:define_path()
+    let l:settext_path = s:base_path.s:path_to_mdpreview.'settext.js'
+    let l:prevfile_path = s:base_path.s:path_to_mdpreview.'preview.html'
+    let l:text_list = []
+    let s:toggle_autowrite = 1
+    call add(l:text_list,'var text = '''.l:text.''';')
+    call add(l:text_list,'var bodyTag = document.getElementById("body");')
+    call add(l:text_list,'bodyTag.innerHTML = text;')
+" encode utf-8 for output.html 
     let l:k = 0
-    while l:k < len(l:copy_list)
-        let l:copy_list[l:k] = iconv(l:copy_list[l:k],&encoding,"uft-8")
+    while l:k < len(l:text_list)
+        let l:text_list[l:k] = iconv(l:text_list[l:k],&encoding,"uft-8")
         let l:k += 1
     endwhile
-" encode utf-8 for output.html }
-
-    call writefile(l:copy_list,l:file_path)
-    call s:open(l:file_path)
+    call writefile(l:text_list,l:settext_path)
+    call s:open(l:prevfile_path)
 endfunction " }}}
 
 " Automatic write output.html.
-function! mdforvim#autowrite() " {{{
-    call s:define_path()
-    let l:file_path = s:base_path.s:path_to_mdpreview.s:file_name
+function! mdforvim#autowrite() "{{{
     if s:toggle_autowrite == 1
-        call s:Convert_markdown()
-        call insert(s:line_list,'</SCRIPT>')
-        call insert(s:line_list,'//-->')
-        call insert(s:line_list,'setTimeout("location.reload()",1000)')
-        call insert(s:line_list,'<!--')
-        call insert(s:line_list,'<SCRIPT LANGUAGE="JavaScript">')
-        call insert(s:line_list,'<body>')
-        call insert(s:line_list,'</head>')
-        call insert(s:line_list,'<link rel="stylesheet" href="style.css" type="text/css">')
-        call insert(s:line_list,'<meta http-equiv="Content-Type" content="text/html; charset=utf-8">')
-        call insert(s:line_list,'<head>')
-        call insert(s:line_list,'<html>')
-        call add(s:line_list,'</body>')
-        call add(s:line_list,'</html>')
-" encode utf-8 for output.html {
-        let l:copy_list = copy(s:line_list)
+        call s:Convert_markdown_preview()
+        let l:text = join(s:line_list,'')
+        call s:define_path()
+        let l:settext_path = s:base_path.s:path_to_mdpreview.'settext.js'
+        let l:text_list = []
+        let s:toggle_autowrite = 1
+        call add(l:text_list,'var text = '''.l:text.''';')
+        call add(l:text_list,'var bodyTag = document.getElementById("body");')
+        call add(l:text_list,'bodyTag.innerHTML = text;')
+    " encode utf-8 for output.html {
         let l:k = 0
-        while l:k < len(l:copy_list)
-            let l:copy_list[l:k] = iconv(l:copy_list[l:k],&encoding,"uft-8")
+        while l:k < len(l:text_list)
+            let l:text_list[l:k] = iconv(l:text_list[l:k],&encoding,"uft-8")
             let l:k += 1
         endwhile
-" encode utf-8 for output.html }
-        " echo s:base_path
-        call writefile(l:copy_list,l:file_path)
+        call writefile(l:text_list,l:settext_path)
     endif
-endfunction " }}}
+endfunction "}}}
 
 " Stop preview.
 function! mdforvim#stop_preview() " {{{
-    let l:file_path = s:base_path.s:path_to_mdpreview.s:file_name
     let s:toggle_autowrite = 0
-    let l:list=['<html><body><h3>Please close this page</h3></body></html>']
-    call writefile(l:list,l:file_path)
+    let l:text_list = []
+    let l:settext_path = s:base_path.s:path_to_mdpreview.'settext.js'
+    let l:text = '<h3>Please close this page.</h3>'
+    call add(l:text_list,'var text = '''.l:text.''';')
+    call add(l:text_list,'var bodyTag = document.getElementById("body");')
+    call add(l:text_list,'bodyTag.innerHTML = text;')
+    " encode utf-8 for output.html {
+        let l:k = 0
+        while l:k < len(l:text_list)
+            let l:text_list[l:k] = iconv(l:text_list[l:k],&encoding,"uft-8")
+            let l:k += 1
+        endwhile
+    call writefile(l:text_list,l:settext_path)
 endfunction " }}}
 
 " Open a file.
@@ -143,15 +141,15 @@ function! s:open(filename) "{{{
     endif
 endfunction "}}}
 
-function! s:define_path()
+function! s:define_path() " {{{
     if s:is_windows
         let s:path_to_mdpreview = '\..\mdpreview\'
     else
         let s:path_to_mdpreview = '/../mdpreview/'
     endif
-endfunction
+endfunction " }}}
 
-fun! s:Convert_markdown()
+fun! s:Convert_markdown() " {{{
     let s:line_list =['']
     let s:i = 0
     let s:num_of_line = line("$")
@@ -178,7 +176,7 @@ fun! s:Convert_markdown()
     endwhile
     call s:Convert_paragraph()
     call s:Convert_char()
-endfun
+endfun " }}}
 " Convert Markdown for preview.
 fun! s:Convert_markdown_preview() " {{{
     let s:line_list =['']
@@ -208,8 +206,8 @@ fun! s:Convert_markdown_preview() " {{{
     call s:Convert_paragraph()
     call s:Convert_char()
 endfun " }}}
-
-function! s:Convert_header(i)
+" Convert header
+function! s:Convert_header(i) "{{{
     if match(s:line_list[a:i],"###### ") == 0 && match(s:line_list[a:i],"!###### ") < 0
         let s:line_list[a:i] = substitute(s:line_list[a:i],"###### ","<h6>","g") ."</h6>"
     elseif match(s:line_list[a:i],"##### ") == 0
@@ -230,14 +228,15 @@ function! s:Convert_header(i)
         endif
     endif
 endfunction
+" }}}
 "...>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....
 " Convert horizon line.
-fun! s:Convert_horizon(i)
+fun! s:Convert_horizon(i) " {{{
     let l:line = substitute(s:line_list[a:i],' ','','g')
     if (strpart(l:line,0,3) == "***" || strpart(l:line,0,3) == "---")  && stridx(s:line_list[a:i],'\') < 0
         let s:line_list[a:i] = "<hr>"
     endif
-endfun
+endfun " }}}
 "...>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....
 " Convert enphasis.
 function! s:Convert_enphasis(i) " {{{
@@ -389,7 +388,7 @@ endfunction " }}}
 
 "...>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....
 " Convert code.
-function! s:Convert_code(i)
+function! s:Convert_code(i) " {{{
     if stridx(s:line_list[a:i],'```') >= 0
         let s:line_list[a:i] = '<pre><code>'
         let l:k = 1
@@ -434,7 +433,7 @@ function! s:Convert_code(i)
         let s:line_list[a:i] = join(l:linelist,'')
     endif
 endfunction
-
+" }}}
 "...>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....
 " Convert URL.
 function! s:Convert_URL(i) "{{{
@@ -773,7 +772,25 @@ fun! s:Cutstrpart(str,start,end) " {{{
     return strpart(a:str,l:num_start,l:num_end)
 endfunction " }}}
 
-
+" ---plugin/mdforvim.vim---
+" augroup write_text
+"     autocmd!
+"     autocmd TextChangedI * call mdforvim#autowrite()
+"     autocmd TextChanged * call mdforvim#autowrite()
+" augroup END
+" 
+" if !exists(":MdCovert")
+"     command! MdConvert call mdforvim#convert()
+" endif
+" if !exists(":MdSaveAs")
+"     command! -nargs=1 MdSaveAs call mdforvim#save_html(<q-args>)
+" endif
+" if !exists("MdPreview")
+"     command! MdPreview call mdforvim#preview()
+" endif
+" if !exists("MdStopPreview")
+"     command! MdStopPreview call mdforvim#stop_preview()
+" endif
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
