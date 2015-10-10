@@ -11,10 +11,10 @@ mdforvim
 
 ## Demo
 ### Showing Real-time Preview
-![demo01](./mdpreview/images/demo01.gif)
+![demo01](https://raw.githubusercontent.com/kurocode25/storeroom/master/mdforvim/demo01.gif)
 
 ### Conversion Markdown in current buffer
-![demo02](./mdpreview/images/demo02.gif)
+![demo02](https://raw.githubusercontent.com/kurocode25/storeroom/master/mdforvim/demo02.gif)
 
 ## Usage
 ### Instant conversion in current buffer
