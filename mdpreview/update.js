@@ -9,6 +9,7 @@ function reload() {
     var script = document.createElement('script');
     script.type = 'text/javascript';
     script.src = 'settext.js';
+    script.charset = 'UTF-8';
     head.appendChild(script);
 }
     
