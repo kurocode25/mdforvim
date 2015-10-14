@@ -61,7 +61,7 @@ function! mdforvim#preview() " {{{
 " encode utf-8 for output.html 
     let l:k = 0
     while l:k < len(l:text_list)
-        let l:text_list[l:k] = iconv(l:text_list[l:k],&encoding,"utf8")
+        let l:text_list[l:k] = iconv(l:text_list[l:k],&encoding,"utf-8")
         let l:k += 1
     endwhile
     call writefile(l:text_list,l:settext_path)
@@ -104,7 +104,7 @@ function! mdforvim#stop_preview() " {{{
     " encode utf-8 for output.html {
         let l:k = 0
         while l:k < len(l:text_list)
-            let l:text_list[l:k] = iconv(l:text_list[l:k],&encoding,"shift-jis")
+            let l:text_list[l:k] = iconv(l:text_list[l:k],&encoding,"utf-8")
             let l:k += 1
         endwhile
     call writefile(l:text_list,l:settext_path)
