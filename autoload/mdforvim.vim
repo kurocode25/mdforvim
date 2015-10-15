@@ -573,27 +573,51 @@ fun! s:Convert_list(i) " {{{
 " Disc List: {
    if stridx(strpart(s:line_list[a:i],0,3),'* ') >= 0 && stridx(strpart(s:line_list[a:i],0,3),'\*') < 0
        let s:line_list[a:i] = substitute(s:line_list[a:i],"* ","<li>","g")."</li>"
+       let l:toggle_count = 0
        if s:line_list[a:i-1] == ""
+           let l:toggle_count = 1
            call insert(s:line_list,'<ul>',a:i)
        endif
-       if s:line_list[a:i+1] == ""
-           call insert(s:line_list,'</ul>',a:i + 1)
+       if l:toggle_count == 0
+           if s:line_list[a:i+1] == ""
+               call insert(s:line_list,'</ul>',a:i + 1)
+           endif
+       else
+           if s:line_list[a:i+2] == ""
+               call insert(s:line_list,'</ul>',a:i + 2)
+           endif
        endif
     elseif stridx(strpart(s:line_list[a:i],0,3),'+ ') >= 0 && stridx(strpart(s:line_list[a:i],0,3),'\+') < 0
        let s:line_list[a:i] = substitute(s:line_list[a:i],"+ ","<li>","g")."</li>"
+       let l:toggle_count = 0
        if s:line_list[a:i-1] == ""
+           let l:toggle_count = 1
            call insert(s:line_list,'<ul>',a:i)
        endif
-       if s:line_list[a:i+1] == ""
-           call insert(s:line_list,'</ul>',a:i + 1)
+       if l:toggle_count == 0
+           if s:line_list[a:i+1] == ""
+               call insert(s:line_list,'</ul>',a:i + 1)
+           endif
+       else
+           if s:line_list[a:i+2] == ""
+               call insert(s:line_list,'</ul>',a:i + 2)
+           endif
        endif
     elseif stridx(strpart(s:line_list[a:i],0,3),'_ ') >= 0 && stridx(strpart(s:line_list[a:i],0,3),'\_') < 0
        let s:line_list[a:i] = substitute(s:line_list[a:i],"_ ","<li>","g")."</li>"
+       let l:toggle_count = 0
        if s:line_list[a:i-1] == ""
+           let l:toggle_count = 1
            call insert(s:line_list,'<ul>',a:i)
        endif
-       if s:line_list[a:i+1] == ""
-           call insert(s:line_list,'</ul>',a:i + 1)
+       if l:toggle_count == 0
+           if s:line_list[a:i+1] == ""
+               call insert(s:line_list,'</ul>',a:i + 1)
+           endif
+       else
+           if s:line_list[a:i+2] == ""
+               call insert(s:line_list,'</ul>',a:i + 2)
+           endif
        endif
     endif
 " Disc List: }
@@ -795,7 +819,7 @@ endfunction " }}}
 " if !exists("MdStopPreview")
 "     command! MdStopPreview call mdforvim#stop_preview()
 " endif
-" 
-" let &cpo = s:save_cpo
-" unlet s:save_cpo
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
 " vim:set foldmethod=marker:
