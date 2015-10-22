@@ -5,9 +5,14 @@
 " | | | | | | (_| |  _| (_) | |   \ V /| | | | | | |
 " |_| |_| |_|\__,_|_|  \___/|_|    \_/ |_|_| |_| |_|
 " 
-" ==================================================
-" Last Change: 2015 Oct. 10
+" Last Change: 2015 Oct. 22
 " Maintainer: Kuro_CODE25 <kuro.code25@gmail.com>
+"
+" Copyright (c) 2014 Kuro_CODE25
+" This software is released under the MIT License.
+" http://opensource.org/licenses/mit-license.php
+"
+" ==================================================
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -621,17 +626,25 @@ fun! s:Convert_list(i) " {{{
        endif
     endif
 " Disc List: }
-"Decimal List: {
+" Decimal List: {
     if strpart(s:line_list[a:i],0,match(s:line_list[a:i],". ")) > 0
         let s:line_list[a:i] = substitute(s:line_list[a:i],strpart(s:line_list[a:i],0,match(s:line_list[a:i],". ")+2),"<li>","g")."</li>"
+        let l:toggle_count = 0
         if s:line_list[a:i - 1] == ""
-           call insert(s:line_list,'<ol>',a:i)
+            let l:toggle_count = 1
+            call insert(s:line_list,'<ol>',a:i)
         endif
-        if s:line_list[a:i + 1] == ""
-           call insert(s:line_list,'</ol>',a:i + 1)
-        endif
+        if l:toggle_count == 0
+            if s:line_list[a:i + 1] == ""
+               call insert(s:line_list,'</ol>',a:i + 1)
+            endif
+       else
+           if s:line_list[a:i+2] == ""
+               call insert(s:line_list,'</ol>',a:i + 2)
+           endif
+       endif
     endif
-"Decimal List: }
+" Decimal List: }
 endfunction " }}}
 
 "...>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....>>>>....
